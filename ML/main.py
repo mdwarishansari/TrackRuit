@@ -1,6 +1,6 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import os
 from dotenv import load_dotenv
 
 from config import Settings, get_settings
@@ -51,11 +51,10 @@ app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
-    settings = get_settings()
+    port = int(os.environ.get("PORT", 8000))
     uvicorn.run(
-        app,
-        host=settings.host,
-        port=settings.port,
-        reload=False,  # Disable reload to avoid multiprocessing issues
-        workers=1      # Use only 1 worker
+        "main:app",
+        host="0.0.0.0",
+        port=port,
+        reload=False
     )

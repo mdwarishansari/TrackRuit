@@ -85,7 +85,9 @@ class BaseModel(ABC):
         """Ensure model is loaded, fallback to default if not"""
         if not self.is_loaded:
             if not self.load_model():
+                print(f"Model {self.model_name} not found, creating default...")
                 self._create_default_model()
+                self.save_model()
     
     def _create_default_model(self):
         """Create a default model implementation"""
