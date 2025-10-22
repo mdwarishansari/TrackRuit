@@ -25,13 +25,14 @@ def create_app() -> FastAPI:
         description="Machine Learning microservice for TrackRuit",
         version="1.0.0",
         docs_url="/ml/docs",
-        redoc_url="/ml/redoc"
+        redoc_url="/ml/redoc",
+        openapi_url="/ml/openapi.json"
     )
 
     # Middleware
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.cors_origins,
+        allow_origins=["*"],  # For now, allow all origins
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -45,10 +46,19 @@ def create_app() -> FastAPI:
     app.include_router(feedback.router, prefix="/ml", tags=["Feedback"])
     app.include_router(ats.router, prefix="/ml", tags=["ATS"])
 
+    @app.get("/")
+    async def root():
+        return {
+            "message": "TrackRuit ML Service", 
+            "status": "running",
+            "docs": "/ml/docs"
+        }
+
     return app
 
 app = create_app()
 
+# This part is only for local development
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
