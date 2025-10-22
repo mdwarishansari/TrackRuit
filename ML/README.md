@@ -1,7 +1,8 @@
 ---
 # 🧠 TrackRuit ML Service
 
-# Live link - render.com
+# Live link – [trackruit-ml.onrender.com](https://trackruit-ml.onrender.com)
+
 <div align="center">
 
 ![TrackRuit](https://img.shields.io/badge/TrackRuit-ML%20Service-blue)
@@ -157,46 +158,54 @@ Built with **FastAPI** and modern **ML/NLP** libraries, it enables semantic resu
 ## 📁 Project Structure
 
 ```
-TrackRuit/ML/
-├── data/                     # Sample data and datasets
-│   ├── sample_jobs.json
-│   ├── sample_resumes.json
-│   └── test_data.py
-├── models/                   # ML models
-│   ├── base_model.py
-│   ├── match_model.py
-│   ├── recommend_model.py
-│   ├── interview_model.py
-│   ├── feedback_model.py
-│   └── ats_model.py
-├── pipelines/                # Processing pipelines
-│   ├── preprocess.py
-│   ├── embeddings.py
-│   └── skills_dict.json
-├── routes/                   # API endpoints
-│   ├── health.py
-│   ├── match.py
-│   ├── recommend.py
-│   ├── interview.py
-│   ├── feedback.py
-│   └── ats.py
-├── scripts/                  # Utility scripts
-│   ├── download_models.py
-│   ├── train_models.py
-│   └── setup_environment.py
-├── tests/                    # Unit & integration tests
-│   ├── test_api.py
-│   └── test_models.py
-├── utils/                    # Helpers
-│   ├── cache.py
-│   ├── logger.py
-│   ├── security.py
-│   └── validators.py
-├── config.py
-├── main.py
-├── Dockerfile
-├── .env.example
-└── requirements.txt
+├── 📁 ML
+│   ├── 📁 data                     # Sample data and datasets
+│   │   ├── ⚙️ sample_jobs.json
+│   │   ├── ⚙️ sample_resumes.json
+│   │   └── 🐍 test_data.py
+│   ├── 📁 models                   # ML models
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 ats_model.py
+│   │   ├── 🐍 base_model.py
+│   │   ├── 🐍 feedback_model.py
+│   │   ├── 🐍 interview_model.py
+│   │   ├── 🐍 match_model.py
+│   │   └── 🐍 recommend_model.py
+│   ├── 📁 pipelines               # Processing pipelines
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 embeddings.py
+│   │   ├── 🐍 preprocess.py
+│   │   └── ⚙️ skills_dict.json
+│   ├── 📁 routes                  # API endpoints
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 ats.py
+│   │   ├── 🐍 feedback.py
+│   │   ├── 🐍 health.py
+│   │   ├── 🐍 interview.py
+│   │   ├── 🐍 match.py
+│   │   └── 🐍 recommend.py
+│   ├── 📁 scripts                # Utility scripts
+│   │   ├── 🐍 download_models.py
+│   │   ├── 🐍 setup_environment.py
+│   │   └── 🐍 train_models.py
+│   ├── 📁 tests                  # Unit & integration tests
+│   │   ├── 📁 test_data
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 test_api.py
+│   │   └── 🐍 test_models.py
+│   ├── 📁 utils                # Helper functions
+│   │   ├── 🐍 __init__.py
+│   │   ├── 🐍 cache.py
+│   │   ├── 🐍 logger.py
+│   │   ├── 🐍 security.py
+│   │   └── 🐍 validators.py
+│   ├── ⚙️ .gitignore
+│   ├── 🐳 Dockerfile
+│   ├── 🐍 config.py
+│   ├── 🐍 main.py
+│   └── 📄 requirements.txt
+├── 📝 README.md
+└── 📄 requirements.txt
 ```
 
 ---

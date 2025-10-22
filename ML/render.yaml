@@ -1,0 +1,39 @@
+# render.yaml
+
+services:
+  - type: web
+    name: trackruit-ml-service
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: |
+      pip install -r requirements.txt
+      python -m spacy download en_core_web_sm
+      python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords'); nltk.download('averaged_perceptron_tagger')"
+      python scripts/download_models.py
+      python scripts/train_models.py
+    startCommand: gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 8000
+      - key: DEBUG
+        value: false
+      - key: LOG_LEVEL
+        value: info
+      - key: MODEL_DIR
+        value: ./models
+      - key: ENABLE_SBERT
+        value: true
+      - key: ENABLE_CACHE
+        value: true
+      - key: CACHE_TTL
+        value: 3600
+    healthCheckPath: /ml/status
+
+  - type: redis
+    name: trackruit-redis
+    plan: free
+    ipAllowList: []
+    maxmemoryPolicy: noeviction
