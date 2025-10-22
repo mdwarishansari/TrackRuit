@@ -253,14 +253,58 @@ ENABLE_MONITORING=true
 
 ## 🧪 Testing
 
-```bash
-pytest tests/ -v
-pytest tests/ --cov=. --cov-report=html
+Here’s a tightened version of your **Testing** section with the key points summarized for quick reference:
+
+---
+
+## 🧪 Testing
+
+### Quick Checks
+
+- **Health Check:** `GET /ml/status` → Returns `{"status": "healthy"}`
+- **Version:** `GET /ml/version` → Returns service version
+- **Docs:** `GET /ml/docs` → Swagger UI
+
+### Core ML Endpoints
+
+| Endpoint              | Method | Quick Test Input          | Expected Output                          |
+| --------------------- | ------ | ------------------------- | ---------------------------------------- |
+| `/ml/match`           | POST   | Resume + Job text         | `match_score`, `top_skills_matched`      |
+| `/ml/recommend`       | POST   | Resume + Job pool         | `recommended_jobs` list                  |
+| `/ml/interview`       | POST   | Candidate metrics         | `probability`, positive/negative factors |
+| `/ml/resume/feedback` | POST   | Resume text + target role | Scores + feedback per section            |
+| `/ml/ats`             | POST   | Resume text               | ATS score, issues, recommendations       |
+
+### Quick Test Commands
+
+**PowerShell:**
+
+```powershell
+Invoke-RestMethod -Uri "http://localhost:8000/ml/status" -Method GET
+$quickTest = @{resume_text="Python dev"; job_description="Python job"} | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:8000/ml/match" -Method POST -Body $quickTest -Headers @{"X-API-Key"="trackruit-prod-key-123"; "Content-Type"="application/json"}
 ```
 
-- API coverage >95%
-- Unit + integration tests included
-- Error handling validated
+**Python:**
+
+```python
+import requests
+resp = requests.get("http://localhost:8000/ml/status")
+print(resp.json())
+```
+
+### Batch Testing Script
+
+Use `test_all_endpoints.py` to automatically test health, match, recommend, and interview endpoints with results summary.
+
+### Success Checklist
+
+- Health returns `"healthy"` ✅
+- Swagger docs load ✅
+- Match score 0–1 ✅
+- Recommendations list returned ✅
+- Interview probability 0–1 ✅
+- Feedback & ATS endpoints return scores and suggestions ✅
 
 ---
 
