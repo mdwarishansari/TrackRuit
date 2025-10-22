@@ -1,0 +1,6 @@
+{
+  "model_name": "match",
+  "version": "match-v1",
+  "created_at": "2025-10-22T21:02:00.976284",
+  "model_path": "./models\\match-match-v1.joblib"
+}

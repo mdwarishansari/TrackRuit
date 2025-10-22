@@ -1,0 +1,14 @@
+{
+  "training_date": "2025-10-22T21:02:07.683359",
+  "model_versions": {
+    "match": "match-v1",
+    "recommend": "recommend-v1",
+    "interview": "interview-v1",
+    "feedback": "feedback-v1",
+    "ats": "ats-v1"
+  },
+  "environment": {
+    "embedding_model": "all-MiniLM-L6-v2",
+    "similarity_threshold": 0.7
+  }
+}

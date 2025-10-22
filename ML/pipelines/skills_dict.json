@@ -1,0 +1,32 @@
+{
+  "programming_languages": [
+    "python", "javascript", "java", "c++", "c#", "go", "rust", "swift", "kotlin",
+    "typescript", "php", "ruby", "scala", "r", "matlab", "perl", "haskell", "elixir"
+  ],
+  "web_development": [
+    "html", "css", "react", "vue", "angular", "django", "flask", "node.js", "express",
+    "spring", "laravel", "rails", "asp.net", "jquery", "bootstrap", "sass", "less"
+  ],
+  "databases": [
+    "mysql", "postgresql", "mongodb", "redis", "sqlite", "oracle", "sql server",
+    "cassandra", "dynamodb", "elasticsearch", "firebase", "cosmosdb"
+  ],
+  "cloud_devops": [
+    "docker", "kubernetes", "aws", "azure", "gcp", "jenkins", "git", "ci/cd",
+    "terraform", "ansible", "prometheus", "grafana", "nginx", "apache"
+  ],
+  "data_science": [
+    "pandas", "numpy", "scikit-learn", "tensorflow", "pytorch", "keras", "opencv",
+    "tableau", "power bi", "spark", "hadoop", "kafka", "airflow", "jupyter"
+  ],
+  "mobile": [
+    "android", "ios", "react native", "flutter", "xamarin", "ionic", "swiftui", "jetpack compose"
+  ],
+  "soft_skills": [
+    "communication", "leadership", "teamwork", "problem solving", "critical thinking",
+    "creativity", "adaptability", "time management", "collaboration", "presentation"
+  ],
+  "methodologies": [
+    "agile", "scrum", "kanban", "waterfall", "devops", "cicd", "tdd", "bdd"
+  ]
+}

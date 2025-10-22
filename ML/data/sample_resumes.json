@@ -1,0 +1,22 @@
+{
+  "resumes": [
+    {
+      "id": "resume_1",
+      "text": "John Doe\nSoftware Engineer\n\nContact: john.doe@email.com | (123) 456-7890 | linkedin.com/in/johndoe\n\nEXPERIENCE\nSenior Software Engineer - Tech Company Inc. (2020-Present)\n- Developed and maintained microservices using Python and FastAPI\n- Led a team of 3 engineers to deliver new features\n- Improved application performance by 40% through optimization\n- Implemented CI/CD pipelines using Docker and Kubernetes\n\nSoftware Developer - Startup Co. (2018-2020)\n- Built web applications using React and Node.js\n- Collaborated with product team to define requirements\n- Reduced page load time by 30% through code optimization\n\nEDUCATION\nBachelor of Science in Computer Science\nUniversity of Technology (2014-2018)\nGPA: 3.8/4.0\n\nSKILLS\nProgramming: Python, JavaScript, Java, SQL\nFrameworks: React, Node.js, FastAPI, Django\nTools: Docker, Kubernetes, AWS, Git, Jenkins\nDatabases: PostgreSQL, MongoDB, Redis\n\nPROJECTS\nE-commerce Platform - Full-stack development using React and Django\nMachine Learning API - REST API for predictive models",
+      "role": "software engineer",
+      "experience_years": 6
+    },
+    {
+      "id": "resume_2", 
+      "text": "Jane Smith\nData Scientist\n\nEmail: jane.smith@email.com | Phone: (987) 654-3210\nGitHub: github.com/janesmith\n\nPROFESSIONAL EXPERIENCE\nData Scientist - Data Corp (2019-Present)\n- Developed machine learning models for customer segmentation\n- Implemented NLP pipelines for text classification\n- Created data visualizations using Tableau and Python\n- Collaborated with engineering team to deploy models\n\nData Analyst - Analytics Inc. (2017-2019)\n- Analyzed large datasets to provide business insights\n- Built dashboards for key performance indicators\n- Wrote SQL queries for data extraction and transformation\n\nEDUCATION\nMaster of Science in Data Science\nData University (2015-2017)\n\nBachelor of Science in Statistics\nMath College (2011-2015)\n\nTECHNICAL SKILLS\nProgramming: Python, R, SQL, Scala\nML Libraries: Scikit-learn, TensorFlow, PyTorch, Pandas\nData Tools: Jupyter, Tableau, Apache Spark, Hadoop\nDatabases: MySQL, PostgreSQL, MongoDB\n\nCERTIFICATIONS\nAWS Certified Data Analytics Specialty\nGoogle Cloud Professional Data Engineer",
+      "role": "data scientist",
+      "experience_years": 6
+    },
+    {
+      "id": "resume_3",
+      "text": "Alex Johnson\nFrontend Developer\n\nContact: alex.j@email.com | (555) 123-4567\nPortfolio: alexjohnson.dev\n\nWORK EXPERIENCE\nFrontend Developer - Web Solutions Ltd. (2020-Present)\n- Developed responsive web applications using React and TypeScript\n- Implemented state management with Redux and Context API\n- Optimized website performance achieving 95+ Lighthouse scores\n- Collaborated with UX designers to implement pixel-perfect designs\n\nJunior Web Developer - Digital Agency (2018-2020)\n- Built websites using HTML, CSS, and JavaScript\n- Maintained and updated client websites\n- Worked with WordPress and custom themes\n\nEDUCATION\nBachelor of Design in Web Development\nDesign Institute (2014-2018)\n\nSKILLS\nFrontend: React, Vue.js, Angular, TypeScript, JavaScript\nStyling: CSS3, SASS, Tailwind CSS, Styled Components\nTools: Webpack, Babel, Git, npm, VS Code\nTesting: Jest, Cypress, React Testing Library\n\nPROJECTS\nE-commerce Dashboard - Real-time analytics dashboard with React and D3.js\nComponent Library - Reusable React components with Storybook",
+      "role": "frontend developer", 
+      "experience_years": 4
+    }
+  ]
+}

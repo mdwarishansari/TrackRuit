@@ -1,0 +1,31 @@
+{
+  "jobs": [
+    {
+      "id": "job_1",
+      "title": "Senior Python Developer",
+      "company": "Tech Innovations Inc.",
+      "description": "We are looking for a Senior Python Developer to join our backend team. The ideal candidate will have extensive experience with Python, microservices architecture, and cloud platforms.\n\nResponsibilities:\n- Develop and maintain Python-based microservices\n- Design and implement RESTful APIs using FastAPI or Django\n- Work with PostgreSQL and MongoDB databases\n- Deploy and manage applications on AWS\n- Collaborate with frontend developers and product managers\n- Write clean, tested, and documented code\n\nRequirements:\n- 5+ years of Python development experience\n- Strong knowledge of FastAPI, Django, or Flask\n- Experience with Docker and Kubernetes\n- Proficiency with AWS services (EC2, S3, RDS)\n- Knowledge of SQL and database design\n- Experience with Git and CI/CD pipelines\n\nNice to Have:\n- Experience with machine learning libraries\n- Knowledge of message brokers (Redis, RabbitMQ)\n- Understanding of system design principles",
+      "required_skills": ["python", "fastapi", "django", "postgresql", "aws", "docker", "kubernetes"],
+      "preferred_skills": ["machine learning", "redis", "system design"],
+      "experience_level": "senior"
+    },
+    {
+      "id": "job_2",
+      "title": "Data Scientist",
+      "company": "Data Analytics Corp",
+      "description": "Join our data science team to build predictive models and derive insights from large datasets. We're looking for someone passionate about machine learning and data analysis.\n\nResponsibilities:\n- Develop and deploy machine learning models\n- Perform statistical analysis and hypothesis testing\n- Create data visualizations and reports\n- Collaborate with engineering teams to productionize models\n- Clean and preprocess large datasets\n- Communicate findings to stakeholders\n\nRequirements:\n- 3+ years of experience in data science\n- Proficiency in Python and data science libraries (Pandas, NumPy, Scikit-learn)\n- Experience with SQL and database querying\n- Knowledge of statistical methods and ML algorithms\n- Experience with data visualization tools\n- Strong problem-solving skills\n\nNice to Have:\n- Experience with TensorFlow or PyTorch\n- Knowledge of big data technologies (Spark, Hadoop)\n- Experience with cloud platforms (AWS, GCP, Azure)",
+      "required_skills": ["python", "pandas", "numpy", "scikit-learn", "sql", "machine learning", "statistics"],
+      "preferred_skills": ["tensorflow", "pytorch", "spark", "aws"],
+      "experience_level": "mid-level"
+    },
+    {
+      "id": "job_3", 
+      "title": "React Frontend Developer",
+      "company": "Web Solutions LLC",
+      "description": "We're seeking a skilled React Developer to build modern, responsive web applications. You'll work closely with our design team to create exceptional user experiences.\n\nResponsibilities:\n- Develop new user-facing features using React\n- Build reusable components and frontend libraries\n- Translate designs and wireframes into high-quality code\n- Optimize components for maximum performance\n- Collaborate with backend developers on API integration\n- Write unit and integration tests\n\nRequirements:\n- 3+ years of React development experience\n- Strong proficiency in JavaScript, including ES6+ features\n- Experience with popular React workflows (Redux, Context API)\n- Familiarity with modern frontend build pipelines and tools\n- Knowledge of RESTful APIs and asynchronous request handling\n- Experience with CSS preprocessors and CSS-in-JS\n\nNice to Have:\n- Experience with TypeScript\n- Knowledge of testing frameworks (Jest, React Testing Library)\n- Experience with server-side rendering (Next.js)\n- Understanding of web accessibility standards",
+      "required_skills": ["react", "javascript", "redux", "css", "rest api", "git"],
+      "preferred_skills": ["typescript", "jest", "next.js", "accessibility"],
+      "experience_level": "mid-level"
+    }
+  ]
+}
