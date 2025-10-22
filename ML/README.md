@@ -1,6 +1,6 @@
 # 🧠 TrackRuit ML Service
 
-# Live link – [trackruit-ml.onrender.com](https://trackruit-ml.onrender.com)
+# Live link – [https://trackruit-ml.onrender.com](https://trackruit-ml.onrender.com)
 
 <div align="center">
 
