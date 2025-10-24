@@ -1,10 +1,14 @@
 import re
 from typing import Dict, List, Any
+import logging
 from .base_model import BaseModel
 from pipelines.preprocess import preprocessor
 
+# Set up logger
+logger = logging.getLogger("feedback_model")
+
 class FeedbackModel(BaseModel):
-    """ML-Powered Resume Feedback and Analysis Model"""
+    """ML-Powered Resume Feedback and Analysis Model with calibrated scoring"""
     
     def __init__(self, version: str = None):
         super().__init__("feedback", version)
@@ -21,7 +25,7 @@ class FeedbackModel(BaseModel):
             'devops': ['docker', 'kubernetes', 'aws', 'jenkins', 'terraform', 'linux', 'ci/cd']
         }
         
-        # ML Feature: Scoring weights (based on resume effectiveness research)
+        # ML Feature: Scoring weights (calibrated for more realistic scores)
         self.weights = {
             'structure': 0.4,
             'keywords': 0.4,
@@ -52,7 +56,7 @@ class FeedbackModel(BaseModel):
         }
     
     def predict(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """ML Prediction: Generate comprehensive resume feedback"""
+        """ML Prediction: Generate comprehensive resume feedback with better error handling"""
         try:
             processed_data = self.preprocess(data)
             resume_text = processed_data['resume_text']
@@ -65,30 +69,36 @@ class FeedbackModel(BaseModel):
             skills = preprocessor.extract_skills(resume_text)
             sections = preprocessor.extract_sections(resume_text)
             
-            # ML Scoring: Calculate component scores
+            # ML Scoring: Calculate component scores with calibration
             structure_score = self._calculate_ml_structure_score(sections, resume_text)
             keyword_score = self._calculate_ml_keyword_score(resume_text, target_role)
             skill_score = self._calculate_ml_skill_score(skills, target_role)
             
-            # ML Aggregation: Overall score
+            # ML Aggregation: Overall score with calibration
             overall_score = (
                 structure_score * self.weights['structure'] +
                 keyword_score * self.weights['keywords'] + 
                 skill_score * self.weights['skills']
             )
             
+            # Apply calibration to make scores more realistic
+            calibrated_overall_score = self._calibrate_score(overall_score)
+            calibrated_structure_score = self._calibrate_score(structure_score)
+            calibrated_keyword_score = self._calibrate_score(keyword_score)
+            calibrated_skill_score = self._calibrate_score(skill_score)
+            
             # ML Feedback Generation
             feedback = self._generate_ml_feedback(
-                structure_score, keyword_score, skill_score, 
+                calibrated_structure_score, calibrated_keyword_score, calibrated_skill_score, 
                 sections, skills, target_role
             )
             
             # Return with proper ML model version
             return {
-                "overall_score": round(overall_score, 4),
-                "structure_score": round(structure_score, 4),
-                "keyword_score": round(keyword_score, 4),
-                "skill_score": round(skill_score, 4),
+                "overall_score": round(calibrated_overall_score, 4),
+                "structure_score": round(calibrated_structure_score, 4),
+                "keyword_score": round(calibrated_keyword_score, 4),
+                "skill_score": round(calibrated_skill_score, 4),
                 "metrics": {
                     "word_count": len(resume_text.split()),
                     "character_count": len(resume_text),
@@ -99,43 +109,49 @@ class FeedbackModel(BaseModel):
                 "skills_found": skills[:15],
                 "sections_found": list(sections.keys()),
                 "feedback": feedback,
-                "model_version": self.get_version()  # This will now be a string
+                "model_version": self.get_version()
             }
             
         except Exception as e:
-            print(f"ML Error in feedback generation: {e}")
+            logger.error(f"ML Error in feedback generation: {e}")
             return self._get_error_response(str(e))
     
+    def _calibrate_score(self, score: float) -> float:
+        """Calibrate scores to be more realistic (0.4-0.9 range for decent resumes)"""
+        # Apply a scaling factor to make scores more realistic
+        calibrated = min(score * 1.3, 0.95)  # Scale up but cap at 0.95
+        return max(calibrated, 0.1)  # Ensure minimum score
+    
     def _calculate_ml_structure_score(self, sections: Dict[str, str], resume_text: str) -> float:
-        """ML Feature: Calculate structure score using ML principles"""
+        """ML Feature: Calculate structure score using ML principles - CALIBRATED"""
         score = 0.0
         
-        # ML Component: Essential section detection
+        # ML Component: Essential section detection - MORE GENEROUS
         essential_sections = ['experience', 'education', 'skills']
         found_essential = sum(1 for section in essential_sections if section in sections)
         section_completeness = found_essential / len(essential_sections)
-        score += section_completeness * 0.4
+        score += section_completeness * 0.5  # Increased weight
         
-        # ML Component: Optimal length scoring
+        # ML Component: Optimal length scoring - WIDER RANGE
         word_count = len(resume_text.split())
-        if 300 <= word_count <= 1000:  # Industry standard optimal range
+        if 350 <= word_count <= 900:  # Optimal range
+            score += 0.4
+        elif 250 <= word_count <= 1200:  # Good range  
             score += 0.3
-        elif 200 <= word_count <= 1500:  # Acceptable range
+        elif 150 <= word_count <= 2000:  # Acceptable range
             score += 0.2
         else:
             score += 0.1
         
-        # ML Component: Section content quality
-        has_substantial_content = any(
-            len(content.split()) > 50 for content in sections.values()
-        )
+        # ML Component: Section content quality - MORE GENEROUS
+        has_substantial_content = any(len(content.split()) > 30 for content in sections.values())
         if has_substantial_content:
             score += 0.3
         
         return min(score, 1.0)
     
     def _calculate_ml_keyword_score(self, resume_text: str, target_role: str) -> float:
-        """ML Feature: Calculate keyword relevance score"""
+        """ML Feature: Calculate keyword relevance score - CALIBRATED"""
         # Get relevant keywords for target role
         relevant_keywords = []
         for role, keywords in self.role_keywords.items():
@@ -159,30 +175,29 @@ class FeedbackModel(BaseModel):
         word_count = len(resume_text.split())
         keyword_density = len(found_keywords) / max(word_count / 100, 1)
         
-        # Combined score with density consideration
-        final_score = (coverage * 0.8) + (min(keyword_density * 0.2, 0.2))
+        # Combined score with density consideration - MORE GENEROUS
+        final_score = (coverage * 0.7) + (min(keyword_density * 0.3, 0.3))
         return min(final_score, 1.0)
     
     def _calculate_ml_skill_score(self, skills: List[str], target_role: str) -> float:
-        """ML Feature: Calculate skill relevance and quantity score"""
+        """ML Feature: Calculate skill relevance and quantity score - CALIBRATED"""
         if not skills:
-            return 0.0
+            return 0.3  # Base score even with no skills
         
-        # ML Component: Skill quantity scoring (more skills = better, to a point)
+        # ML Component: Skill quantity scoring (more skills = better, to a point) - MORE GENEROUS
         skill_count = len(skills)
-        if skill_count >= 12:
+        if skill_count >= 10:
             quantity_score = 1.0
-        elif skill_count >= 8:
+        elif skill_count >= 7:
             quantity_score = 0.8
         elif skill_count >= 5:
             quantity_score = 0.6
         elif skill_count >= 3:
-            quantity_score = 0.4
+            quantity_score = 0.5
         else:
-            quantity_score = 0.2
+            quantity_score = 0.4
         
         # ML Component: Skill relevance (basic implementation)
-        # In production, this would use skill categorization and role matching
         relevance_score = 0.7  # Placeholder for skill-role relevance
         
         return (quantity_score * 0.6) + (relevance_score * 0.4)
@@ -200,8 +215,8 @@ class FeedbackModel(BaseModel):
         """ML Feature: Generate intelligent, actionable feedback"""
         feedback = []
         
-        # Structure-based feedback
-        if structure_score < 0.6:
+        # Structure-based feedback - ADJUSTED THRESHOLDS
+        if structure_score < 0.7:
             feedback.append("Improve resume structure: Ensure Experience, Education, and Skills sections are clearly defined.")
         
         missing_sections = []
@@ -212,14 +227,14 @@ class FeedbackModel(BaseModel):
         if missing_sections:
             feedback.append(f"Add missing sections: {', '.join(missing_sections)}")
         
-        # Keyword-based feedback
-        if keyword_score < 0.6:
+        # Keyword-based feedback - ADJUSTED THRESHOLDS
+        if keyword_score < 0.7:
             feedback.append(f"Add more {target_role}-specific keywords to improve ATS compatibility and relevance.")
-        elif keyword_score < 0.8:
+        elif keyword_score < 0.85:
             feedback.append("Good keyword coverage. Consider adding more technical terms and tools specific to your target role.")
         
-        # Skills-based feedback
-        if skill_score < 0.5:
+        # Skills-based feedback - ADJUSTED THRESHOLDS
+        if skill_score < 0.6:
             feedback.append("Include more technical skills relevant to your target role.")
         elif len(skills) > 15:
             feedback.append("Consider focusing on your most relevant skills (quality over quantity).")
@@ -229,11 +244,11 @@ class FeedbackModel(BaseModel):
         if impact_count < 3:
             feedback.append("Use more action verbs and quantify achievements in your Experience section.")
         
-        # Positive reinforcement
-        if structure_score > 0.7:
+        # Positive reinforcement - ADJUSTED THRESHOLDS
+        if structure_score > 0.8:
             feedback.append("Well-structured resume with clear sections.")
         
-        if keyword_score > 0.8:
+        if keyword_score > 0.85:
             feedback.append("Excellent use of role-specific keywords.")
         
         return feedback[:6]  # Limit to most important feedback
@@ -275,16 +290,17 @@ class FeedbackModel(BaseModel):
         }
     
     def _get_error_response(self, error_msg: str) -> Dict[str, Any]:
-        """ML Error Handling: Error response"""
+        """ML Error Handling: Error response with graceful fallback"""
+        logger.error(f"Feedback model error: {error_msg}")
         return {
-            "overall_score": 0.0,
-            "structure_score": 0.0,
-            "keyword_score": 0.0,
-            "skill_score": 0.0,
+            "overall_score": 0.5,  # Neutral fallback
+            "structure_score": 0.5,
+            "keyword_score": 0.5,
+            "skill_score": 0.5,
             "metrics": {"word_count": 0, "character_count": 0, "skills_found": 0, "sections_found": 0, "impact_verbs": 0},
             "skills_found": [],
             "sections_found": [],
-            "feedback": [f"Error analyzing resume: {error_msg}"],
+            "feedback": ["Temporary service issue. Please try again."],
             "model_version": self.get_version()
         }
 

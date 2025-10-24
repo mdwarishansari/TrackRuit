@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel, Field
 from typing import List, Optional
 
 from models.match_model import MatchModel
-from utils.security import verify_api_key
+from utils.security import verify_api_key, rate_limiter
+from utils.validators import validator
 from config import get_settings
 
 router = APIRouter()
@@ -30,21 +31,25 @@ class MatchResponse(BaseModel):
 @router.post("/match", response_model=MatchResponse)
 async def calculate_match_score(
     request: MatchRequest,
-    api_key: str = Depends(verify_api_key)
+    api_key: str = Depends(verify_api_key),
+    fastapi_request: Request = None
 ):
     """
-    Calculate resume-job matching score
+    Calculate resume-job matching score with rate limiting
     """
     try:
-        # Prepare data for model
-        data = {
-            'resume_text': request.resume_text,
-            'job_description': request.job_description,
-            'use_cache': request.use_cache
-        }
+        # Rate limiting
+        rate_limiter.check_rate_limit(
+            fastapi_request, 
+            limit=settings.rate_limit_per_minute, 
+            window=60
+        )
+        
+        # Validate input
+        input_data = validator.validate_api_input(request.dict(), "match")
         
         # Get match score
-        prediction = match_model.predict(data)
+        prediction = match_model.predict(input_data)
         
         # Ensure model_version is set
         if prediction.get('model_version') is None:
@@ -56,15 +61,29 @@ async def calculate_match_score(
         
         return MatchResponse(**prediction)
         
+    except HTTPException:
+        # Re-raise HTTP exceptions (like rate limiting)
+        raise
     except Exception as e:
+        # Log the error but don't expose internal details
+        import logging
+        logger = logging.getLogger("match_route")
+        logger.error(f"Match prediction error: {str(e)}")
+        
         raise HTTPException(
             status_code=500, 
-            detail=f"Error processing match request: {str(e)}"
+            detail="Resume matching service temporarily unavailable. Please try again later."
         )
 
 @router.get("/match/models")
-async def get_match_models(api_key: str = Depends(verify_api_key)):
-    """Get information about available match models"""
+async def get_match_models(
+    api_key: str = Depends(verify_api_key),
+    fastapi_request: Request = None
+):
+    """Get information about available match models with rate limiting"""
+    # Rate limiting for model info endpoint too
+    rate_limiter.check_rate_limit(fastapi_request, limit=30, window=60)
+    
     return {
         "current_model": match_model.get_version(),
         "model_type": match_model.get_type(),

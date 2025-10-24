@@ -6,20 +6,33 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-    """Application settings"""
+    """Application settings with security improvements"""
     
     # Server
     host: str = os.getenv("HOST", "0.0.0.0")
-    port: int = int(os.getenv("PORT", 8000))
-    workers: int = int(os.getenv("WORKERS", 4))
+    port: int = int(os.getenv("PORT", "8000"))
+    workers: int = int(os.getenv("WORKERS", "4"))
     debug: bool = os.getenv("DEBUG", "false").lower() == "true"
     log_level: str = os.getenv("LOG_LEVEL", "info")
     
-    # Security
-    api_key: str = os.getenv("API_KEY", "dev-key-change-in-production")
-    jwt_secret: str = os.getenv("JWT_SECRET", "dev-jwt-secret")
+    # Security - No hardcoded defaults for production
+    api_key: str = os.getenv("API_KEY", "")
+    if not api_key:
+        # Generate a random key for development only
+        import secrets
+        api_key = secrets.token_urlsafe(32)
+        print(f"⚠️  Using auto-generated API_KEY for development: {api_key[:10]}...")
+    
+    jwt_secret: str = os.getenv("JWT_SECRET", "")
+    if not jwt_secret:
+        import secrets
+        jwt_secret = secrets.token_urlsafe(32)
+    
     cors_origins: List[str] = eval(os.getenv("CORS_ORIGINS", '["http://localhost:3000"]'))
     allowed_hosts: List[str] = ["*"]
+    
+    # Rate limiting
+    rate_limit_per_minute: int = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
     
     # Database & Cache
     redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379")
@@ -29,7 +42,7 @@ class Settings(BaseSettings):
     # ML Configuration
     model_dir: str = os.getenv("MODEL_DIR", "./models")
     embedding_model: str = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
-    cache_ttl: int = int(os.getenv("CACHE_TTL", 86400))
+    cache_ttl: int = int(os.getenv("CACHE_TTL", "86400"))
     similarity_threshold: float = float(os.getenv("SIMILARITY_THRESHOLD", "0.7"))
     
     # Feature Flags
