@@ -18,12 +18,14 @@ class FeedbackRequest(BaseModel):
 
 class FeedbackResponse(BaseModel):
     overall_score: float
-    keyword_score: float
     structure_score: float
-    readability_score: float
+    keyword_score: float
+    skill_score: float
+    metrics: Dict[str, Any]
+    skills_found: List[str]
+    sections_found: List[str]
     feedback: List[str]
     model_version: str
-    section_analysis: Dict[str, Any]
     explanations: Optional[List[str]] = None
     error: Optional[str] = None
 
@@ -45,6 +47,10 @@ async def get_resume_feedback(
         # Get feedback
         prediction = feedback_model.predict(data)
         
+        # Ensure model_version is set
+        if prediction.get('model_version') is None:
+            prediction['model_version'] = feedback_model.get_version()
+        
         # Generate explanations
         explanations = feedback_model.explain(prediction)
         prediction['explanations'] = explanations
@@ -60,13 +66,11 @@ async def get_resume_feedback(
 @router.get("/feedback/models")
 async def get_feedback_models(api_key: str = Depends(verify_api_key)):
     """Get information about available feedback models"""
-    metadata = feedback_model.get_metadata()
-    
     return {
         "current_model": feedback_model.get_version(),
-        "metadata": metadata,
+        "model_type": feedback_model.get_type(),
         "features": {
-            "analysis_types": ["keywords", "structure", "readability", "sections"],
+            "analysis_types": ["keywords", "structure", "skills", "sections"],
             "cache_enabled": False
         }
     }

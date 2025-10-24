@@ -12,40 +12,47 @@ settings = get_settings()
 # Initialize model
 recommend_model = RecommendModel()
 
+class JobItem(BaseModel):
+    id: str
+    title: str
+    company: str
+    description: str
+
 class RecommendRequest(BaseModel):
     resume_text: str = Field(..., min_length=10, max_length=10000)
-    job_pool: List[Dict[str, Any]] = Field(..., min_items=1, max_items=1000)
-    user_history: Optional[List[Dict[str, Any]]] = None
-    max_recommendations: int = Field(10, ge=1, le=50)
+    job_pool: List[JobItem] = Field(..., min_items=1)
+    max_recommendations: int = Field(5, ge=1, le=20)
 
 class RecommendResponse(BaseModel):
     recommended_jobs: List[Dict[str, Any]]
-    model_version: str
     total_jobs_considered: int
+    resume_skills_found: List[str]
+    model_version: str
     explanations: Optional[List[str]] = None
     error: Optional[str] = None
 
 @router.post("/recommend", response_model=RecommendResponse)
-async def get_recommendations(
+async def get_job_recommendations(
     request: RecommendRequest,
     api_key: str = Depends(verify_api_key)
 ):
     """
-    Get job recommendations based on resume and job pool
+    Get personalized job recommendations based on resume
     """
     try:
         # Prepare data for model
         data = {
             'resume_text': request.resume_text,
-            'job_pool': request.job_pool,
-            'user_history': request.user_history or []
+            'job_pool': [job.dict() for job in request.job_pool],
+            'max_recommendations': request.max_recommendations
         }
         
         # Get recommendations
         prediction = recommend_model.predict(data)
         
-        # Limit to max_recommendations
-        prediction['recommended_jobs'] = prediction['recommended_jobs'][:request.max_recommendations]
+        # Ensure model_version is set
+        if prediction.get('model_version') is None:
+            prediction['model_version'] = recommend_model.get_version()
         
         # Generate explanations
         explanations = recommend_model.explain(prediction)
@@ -62,13 +69,11 @@ async def get_recommendations(
 @router.get("/recommend/models")
 async def get_recommend_models(api_key: str = Depends(verify_api_key)):
     """Get information about available recommendation models"""
-    metadata = recommend_model.get_metadata()
-    
     return {
         "current_model": recommend_model.get_version(),
-        "metadata": metadata,
+        "model_type": recommend_model.get_type(),
         "features": {
-            "embedding_model": settings.embedding_model,
-            "cache_enabled": settings.enable_cache
+            "matching_strategy": ["skill_based", "content_based"],
+            "cache_enabled": False
         }
     }

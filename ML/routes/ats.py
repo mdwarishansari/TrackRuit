@@ -16,12 +16,10 @@ class ATSRequest(BaseModel):
     resume_text: str = Field(..., min_length=10, max_length=10000)
 
 class ATSResponse(BaseModel):
-    ats_score: int
-    format_issues: List[str]
-    keyword_status: Dict[str, Any]
-    structural_issues: List[str]
-    model_version: str
+    ats_score: float
+    issues: List[str]
     recommendations: List[str]
+    model_version: str
     explanations: Optional[List[str]] = None
     error: Optional[str] = None
 
@@ -42,6 +40,10 @@ async def analyze_ats_compatibility(
         # Get ATS analysis
         prediction = ats_model.predict(data)
         
+        # Ensure model_version is set
+        if prediction.get('model_version') is None:
+            prediction['model_version'] = ats_model.get_version()
+        
         # Generate explanations
         explanations = ats_model.explain(prediction)
         prediction['explanations'] = explanations
@@ -57,13 +59,11 @@ async def analyze_ats_compatibility(
 @router.get("/ats/models")
 async def get_ats_models(api_key: str = Depends(verify_api_key)):
     """Get information about available ATS models"""
-    metadata = ats_model.get_metadata()
-    
     return {
         "current_model": ats_model.get_version(),
-        "metadata": metadata,
+        "model_type": ats_model.get_type(),
         "features": {
-            "checks_performed": ["format", "keywords", "structure", "compatibility"],
+            "checks_performed": ["sections", "length", "contact_info", "achievements"],
             "cache_enabled": False
         }
     }

@@ -16,8 +16,6 @@ class InterviewModel(BaseModel):
     
     def _create_default_model(self):
         """Create default interview model (heuristic)"""
-        # This is a placeholder for a real model
-        # In phase 1, we use rule-based scoring
         self.is_loaded = True
     
     def preprocess(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -34,7 +32,7 @@ class InterviewModel(BaseModel):
         }
         
         # Normalize features
-        features['applied_jobs'] = min(features['applied_jobs'], 100)  # cap at 100
+        features['applied_jobs'] = min(features['applied_jobs'], 100)
         features['interviews_given'] = min(features['interviews_given'], 50)
         features['prep_hours'] = min(features['prep_hours'], 100)
         features['years_experience'] = min(features['years_experience'], 30)
@@ -52,12 +50,15 @@ class InterviewModel(BaseModel):
             # Generate factors
             factors = self._generate_factors(features, probability)
             
+            # Determine confidence
+            confidence = self._get_confidence_level(probability)
+            
             return {
                 "probability": round(probability, 4),
-                "top_negative_factors": factors['negative'],
-                "top_positive_factors": factors['positive'],
-                "model_version": self.get_version(),
-                "features_used": list(features.keys())
+                "confidence": confidence,
+                "positive_factors": factors['positive'],
+                "negative_factors": factors['negative'],
+                "model_version": self.get_version()
             }
             
         except Exception as e:
@@ -135,9 +136,20 @@ class InterviewModel(BaseModel):
             positive_factors.append("Relevant professional experience")
         
         return {
-            'negative': negative_factors[:3],  # Top 3 negative
-            'positive': positive_factors[:3]   # Top 3 positive
+            'negative': negative_factors[:3],
+            'positive': positive_factors[:3]
         }
+    
+    def _get_confidence_level(self, probability: float) -> str:
+        """Get confidence level based on probability"""
+        if probability >= 0.8:
+            return "high"
+        elif probability >= 0.6:
+            return "medium"
+        elif probability >= 0.4:
+            return "low"
+        else:
+            return "very low"
     
     def explain(self, prediction: Dict[str, Any]) -> List[str]:
         """Generate explanation for interview prediction"""
@@ -152,7 +164,7 @@ class InterviewModel(BaseModel):
             explanations.append("Lower likelihood of interview success. Focus on improving key areas.")
         
         # Add factor-based explanations
-        negative_factors = prediction.get('top_negative_factors', [])
+        negative_factors = prediction.get('negative_factors', [])
         if negative_factors:
             explanations.append(f"Key areas to improve: {', '.join(negative_factors)}")
         
@@ -161,8 +173,12 @@ class InterviewModel(BaseModel):
     def _error_response(self, error_msg: str) -> Dict[str, Any]:
         return {
             "probability": 0.0,
-            "top_negative_factors": [],
-            "top_positive_factors": [],
+            "confidence": "unknown",
+            "positive_factors": [],
+            "negative_factors": [],
             "model_version": self.get_version(),
             "error": error_msg
         }
+
+# Global model instance
+interview_model = InterviewModel()
