@@ -1,39 +1,42 @@
-# render.yaml
-
 services:
   - type: web
-    name: trackruit-ml-service
+    name: trackruit-ml
     env: python
     plan: free
-    region: oregon
-    buildCommand: |
-      pip install -r requirements.txt
-      python -m spacy download en_core_web_sm
-      python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords'); nltk.download('averaged_perceptron_tagger')"
-      python scripts/download_models.py
-      python scripts/train_models.py
-    startCommand: gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000 --timeout 120
+    buildCommand: "./build.sh"
+    startCommand: "python main.py"
     envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.0"
       - key: HOST
-        value: 0.0.0.0
+        value: "0.0.0.0"
       - key: PORT
-        value: 8000
+        value: "8000"
       - key: DEBUG
-        value: false
+        value: "false"
       - key: LOG_LEVEL
-        value: info
-      - key: MODEL_DIR
-        value: ./models
-      - key: ENABLE_SBERT
-        value: true
+        value: "info"
+      - key: API_KEY
+        generateValue: true
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: '["https://trackruit.com", "http://localhost:3000"]'
+      - key: RATE_LIMIT_PER_MINUTE
+        value: "100"
       - key: ENABLE_CACHE
-        value: true
-      - key: CACHE_TTL
-        value: 3600
-    healthCheckPath: /ml/status
+        value: "false"
+      - key: ENABLE_SBERT
+        value: "false"
+      - key: ENABLE_MONITORING
+        value: "true"
+      - key: MAX_TEXT_LENGTH
+        value: "20000"
 
-  - type: redis
-    name: trackruit-redis
-    plan: free
-    ipAllowList: []
-    maxmemoryPolicy: noeviction
+hooks:
+  preDeploy:
+    name: Pre-deploy setup
+    command: |
+      echo "🚀 Starting pre-deploy setup..."
+      python scripts/setup_production.py
+      echo "✅ Pre-deploy setup complete!"
