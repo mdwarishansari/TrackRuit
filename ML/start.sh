@@ -1,10 +1,12 @@
 #!/bin/bash
 echo "🚀 Starting TrackRuit ML Service..."
-
-# Set NLTK data path to project directory
+python scripts/train_models.py
+# Set environment variables
+export HOST="0.0.0.0"
+export PORT=${PORT:-8000}
 export NLTK_DATA="./nltk_data"
 
-# Create necessary directories if they don't exist
+# Create necessary directories
 mkdir -p logs
 mkdir -p nltk_data
 
@@ -16,10 +18,15 @@ import nltk
 import os
 nltk.download('punkt', download_dir='./nltk_data', quiet=True)
 nltk.download('stopwords', download_dir='./nltk_data', quiet=True)
-print('NLTK data ready')
+print('✅ NLTK data ready')
 "
 fi
 
-# Start the application with proper error handling
-echo "🌟 Starting FastAPI server..."
-exec python main.py
+echo "🔧 Environment:"
+echo "   - HOST: $HOST"
+echo "   - PORT: $PORT"
+echo "   - PYTHONPATH: $(pwd)"
+
+# Start the application with explicit port binding
+echo "🌟 Starting FastAPI server on port $PORT..."
+exec uvicorn main:app --host $HOST --port $PORT --workers 1

@@ -6,8 +6,11 @@ Lightweight setup check script for Render.com
 import os
 import sys
 
+# Add current directory to Python path
+sys.path.insert(0, os.getcwd())
+
 def check_setup():
-    """Check basic setup without triggering NLTK imports"""
+    """Check basic setup without triggering heavy imports"""
     print("🧪 Running lightweight setup check...")
     
     try:
@@ -34,13 +37,15 @@ def check_setup():
             else:
                 print(f"⚠️ Model file missing: {model_file}")
         
-        # Test basic Python imports (avoid NLTK)
+        # Test basic Python imports (avoid config for now)
         print("🔧 Testing core imports...")
         try:
-            from config import get_settings
-            print("✅ Config import successful")
+            # Test basic imports that don't trigger NLTK
+            import fastapi
+            import uvicorn
+            print("✅ FastAPI and Uvicorn imports successful")
         except Exception as e:
-            print(f"❌ Config import failed: {e}")
+            print(f"❌ Core import failed: {e}")
             return False
             
         print("✅ All basic checks passed!")

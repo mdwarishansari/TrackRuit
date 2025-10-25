@@ -3,6 +3,7 @@ services:
     name: trackruit-ml
     env: python
     plan: free
+    rootDirectory: ML
     buildCommand: "./build.sh"
     startCommand: "./start.sh"
     envVars:
@@ -14,9 +15,15 @@ services:
         value: "8000"
       - key: DEBUG
         value: "false"
-      - key: NLTK_DATA
-        value: "./nltk_data"
+      - key: LOG_LEVEL
+        value: "info"
       - key: API_KEY
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
+      - key: NLTK_DATA
+        value: "./nltk_data"
+      - key: ENABLE_SBERT
+        value: "false"
+      - key: ENABLE_CACHE
+        value: "false"
