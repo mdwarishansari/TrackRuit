@@ -15,6 +15,7 @@ load_dotenv()
 class TrackRuitTester:
     def __init__(self, base_url=None, api_key=None):
         self.base_url = base_url or os.getenv("BASE_URL", "http://localhost:8000")
+        # self.base_url = base_url or os.getenv("BASE_URL", "https://trackruit-ml.onrender.com")
         self.api_key = api_key or os.getenv("API_KEY")
         self.headers = {
             "X-API-Key": self.api_key,
