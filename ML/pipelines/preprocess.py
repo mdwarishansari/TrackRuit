@@ -1,17 +1,15 @@
 import re
-import spacy
+import os
 import nltk
-from nltk.corpus import stopwords
 from typing import List, Dict, Any
 import json
-import os
 
 class TextPreprocessor:
     """Text preprocessing pipeline with robust error handling"""
     
     def __init__(self):
         self._ensure_nltk_data()
-        self.stop_words = set(stopwords.words('english')) if hasattr(stopwords, 'words') else set()
+        self.stop_words = self._get_stopwords()
         self.skills_dict = self._load_skills_dict()
         
         # Common section headers
@@ -19,20 +17,57 @@ class TextPreprocessor:
             'experience', 'education', 'skills', 'projects', 
             'certifications', 'awards', 'summary', 'objective'
         ]
-        
-        # Try to load spaCy, but continue without it if not available
-        try:
-            self.nlp = spacy.load("en_core_web_sm")
-        except:
-            self.nlp = None
-            print("⚠️ spaCy model not available, using basic preprocessing")
     
     def _ensure_nltk_data(self):
-        """Ensure basic NLTK data is available"""
+        """Ensure NLTK data is available with fallbacks"""
         try:
-            nltk.data.find('tokenizers/punkt')
-        except LookupError:
-            print("⚠️ NLTK punkt not found. Please run quick_fix.py")
+            # Set NLTK data path to project directory
+            nltk_data_path = './nltk_data'
+            if os.path.exists(nltk_data_path):
+                nltk.data.path.append(nltk_data_path)
+            
+            # Try to find punkt tokenizer
+            try:
+                nltk.data.find('tokenizers/punkt')
+            except LookupError:
+                print("⚠️ NLTK punkt not found. Using basic tokenization.")
+                
+        except Exception as e:
+            print(f"⚠️ NLTK setup issue: {e}. Using fallback methods.")
+    
+    def _get_stopwords(self):
+        """Get stopwords with fallback to basic list"""
+        try:
+            from nltk.corpus import stopwords
+            return set(stopwords.words('english'))
+        except:
+            # Fallback basic stopwords
+            basic_stopwords = {
+                'i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 
+                'you', "you're", "you've", "you'll", "you'd", 'your', 'yours', 
+                'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 
+                "she's", 'her', 'hers', 'herself', 'it', "it's", 'its', 'itself', 
+                'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 
+                'who', 'whom', 'this', 'that', "that'll", 'these', 'those', 'am', 
+                'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 
+                'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 
+                'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 
+                'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 
+                'through', 'during', 'before', 'after', 'above', 'below', 'to', 
+                'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 
+                'again', 'further', 'then', 'once', 'here', 'there', 'when', 
+                'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 
+                'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 
+                'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 
+                'can', 'will', 'just', 'don', "don't", 'should', "should've", 
+                'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', 
+                "aren't", 'couldn', "couldn't", 'didn', "didn't", 'doesn', 
+                "doesn't", 'hadn', "hadn't", 'hasn', "hasn't", 'haven', "haven't", 
+                'isn', "isn't", 'ma', 'mightn', "mightn't", 'mustn', "mustn't", 
+                'needn', "needn't", 'shan', "shan't", 'shouldn', "shouldn't", 
+                'wasn', "wasn't", 'weren', "weren't", 'won', "won't", 'wouldn', "wouldn't"
+            }
+            return basic_stopwords
     
     def _load_skills_dict(self) -> Dict[str, List[str]]:
         """Load skills dictionary"""

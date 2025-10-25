@@ -4,7 +4,7 @@ services:
     env: python
     plan: free
     buildCommand: "./build.sh"
-    startCommand: "python main.py"
+    startCommand: "./start.sh"
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.0"
@@ -14,29 +14,9 @@ services:
         value: "8000"
       - key: DEBUG
         value: "false"
-      - key: LOG_LEVEL
-        value: "info"
+      - key: NLTK_DATA
+        value: "./nltk_data"
       - key: API_KEY
         generateValue: true
       - key: JWT_SECRET
         generateValue: true
-      - key: CORS_ORIGINS
-        value: '["https://trackruit.com", "http://localhost:3000"]'
-      - key: RATE_LIMIT_PER_MINUTE
-        value: "100"
-      - key: ENABLE_CACHE
-        value: "false"
-      - key: ENABLE_SBERT
-        value: "false"
-      - key: ENABLE_MONITORING
-        value: "true"
-      - key: MAX_TEXT_LENGTH
-        value: "20000"
-
-hooks:
-  preDeploy:
-    name: Pre-deploy setup
-    command: |
-      echo "🚀 Starting pre-deploy setup..."
-      python scripts/setup_production.py
-      echo "✅ Pre-deploy setup complete!"
