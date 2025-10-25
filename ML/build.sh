@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "🚀 Starting TrackRuit ML Service Build Process..."
-
+pip install --upgrade pip
 # Install only essential dependencies first
 echo "📦 Installing core Python dependencies..."
 pip install --no-cache-dir fastapi==0.104.1 uvicorn==0.24.0 pydantic==2.5.0 python-dotenv==1.0.0
