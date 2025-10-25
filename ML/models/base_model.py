@@ -16,6 +16,18 @@ class BaseModel(ABC):
         self.logger = logging.getLogger(f"{model_type}_model")
         self._ensure_proper_init()
     
+    def save_model(self):
+        """Save model to disk - basic implementation"""
+        try:
+            import joblib
+            model_path = f"./models/{self.model_type}-{self.get_version()}.joblib"
+            joblib.dump({"model_type": self.model_type, "version": self.get_version()}, model_path)
+            print(f"✅ Model saved: {model_path}")
+            return True
+        except Exception as e:
+            print(f"❌ Failed to save model: {e}")
+            return False
+    
     def _ensure_proper_init(self):
         """Ensure proper initialization order for ML models"""
         if not self.is_loaded:

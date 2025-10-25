@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "🚀 Starting TrackRuit ML Service..."
-python scripts/train_models.py
+
 # Set environment variables
 export HOST="0.0.0.0"
 export PORT=${PORT:-8000}

@@ -25,13 +25,16 @@ class TextPreprocessor:
             nltk_data_path = './nltk_data'
             if os.path.exists(nltk_data_path):
                 nltk.data.path.append(nltk_data_path)
-            
-            # Try to find punkt tokenizer
+        
+        # Try to find punkt tokenizer
             try:
                 nltk.data.find('tokenizers/punkt')
+                print("✅ NLTK punkt found")
             except LookupError:
-                print("⚠️ NLTK punkt not found. Using basic tokenization.")
-                
+                print("⚠️ NLTK punkt not found. Downloading...")
+                nltk.download('punkt', download_dir='./nltk_data', quiet=True)
+                nltk.download('stopwords', download_dir='./nltk_data', quiet=True)
+
         except Exception as e:
             print(f"⚠️ NLTK setup issue: {e}. Using fallback methods.")
     
