@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="popup-container">
+      <div class="header">
+        <h3>TrackRuit</h3>
+        <div class="status-indicator" id="statusIndicator"></div>
+      </div>
+
+      <div class="section">
+        <label class="toggle">
+          <input type="checkbox" id="toggleEnabled" />
+          <span class="slider"></span>
+          <span class="label">Extension Enabled</span>
+        </label>
+      </div>
+
+      <div class="section">
+        <label class="toggle">
+          <input type="checkbox" id="toggleAutoTrack" />
+          <span class="slider"></span>
+          <span class="label">Auto-track Applications</span>
+        </label>
+      </div>
+
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-number" id="trackedCount">0</span>
+          <span class="stat-label">Jobs Tracked</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="syncedCount">0</span>
+          <span class="stat-label">Synced</span>
+        </div>
+      </div>
+
+      <div class="sync-section">
+        <button id="syncNow" class="sync-button">Sync Now</button>
+        <span class="last-sync" id="lastSync">Never synced</span>
+      </div>
+
+      <div class="auth-section" id="authSection" style="display: none">
+        <p>Please login to TrackRuit web app to enable syncing</p>
+      </div>
+
+      <div class="footer">
+        <a href="#" id="optionsLink">Settings</a>
+        <span class="version">v1.0</span>
+      </div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
