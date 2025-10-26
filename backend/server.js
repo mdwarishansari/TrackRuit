@@ -42,6 +42,17 @@ const app = express();
 // ========================
 // 🛡️ SECURITY MIDDLEWARE
 // ========================
+// Add to server.js or routes
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    memory: process.memoryUsage(),
+    database:
+      mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+  });
+});
 
 app.use(
   helmet({
