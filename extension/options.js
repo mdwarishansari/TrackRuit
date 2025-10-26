@@ -1,18 +1,12 @@
-// Options page script
-document.addEventListener("DOMContentLoaded", loadSettings);
+// Import secure modules
+import { secureStorage } from "./utils/storage.js";
+import { secureAPI } from "./utils/api.js";
 
-async function loadSettings() {
+document.addEventListener("DOMContentLoaded", loadSecureSettings);
+
+async function loadSecureSettings() {
   try {
-    const settings = await chrome.storage.local.get([
-      "isEnabled",
-      "autoTrack",
-      "showNotifications",
-      "trackLinkedIn",
-      "trackInternshala",
-      "trackUnstop",
-      "userToken",
-      "backendUrl",
-    ]);
+    const settings = (await secureStorage.get("settings")) || {};
 
     // Set checkbox values
     document.getElementById("enableExtension").checked =
@@ -27,48 +21,65 @@ async function loadSettings() {
       settings.trackInternshala !== false;
     document.getElementById("trackUnstop").checked =
       settings.trackUnstop !== false;
+    document.getElementById("trackIndeed").checked =
+      settings.trackIndeed !== false;
 
     document.getElementById("apiToken").value = settings.userToken || "";
     document.getElementById("backendUrl").value =
       settings.backendUrl || "http://localhost:3000";
   } catch (error) {
-    console.error("Error loading settings:", error);
+    console.error("Error loading secure settings:", error);
     showStatus("Error loading settings", "error");
   }
 }
 
-document.getElementById("saveButton").addEventListener("click", saveSettings);
-document.getElementById("resetButton").addEventListener("click", resetSettings);
+document
+  .getElementById("saveButton")
+  .addEventListener("click", saveSecureSettings);
+document
+  .getElementById("resetButton")
+  .addEventListener("click", resetSecureSettings);
+document
+  .getElementById("verifyConnection")
+  .addEventListener("click", verifySecureConnection);
 
-async function saveSettings() {
+async function saveSecureSettings() {
   try {
-    const settings = {
+    const currentSettings = (await secureStorage.get("settings")) || {};
+
+    const newSettings = {
+      ...currentSettings,
       isEnabled: document.getElementById("enableExtension").checked,
       autoTrack: document.getElementById("autoTrack").checked,
       showNotifications: document.getElementById("showNotifications").checked,
       trackLinkedIn: document.getElementById("trackLinkedIn").checked,
       trackInternshala: document.getElementById("trackInternshala").checked,
       trackUnstop: document.getElementById("trackUnstop").checked,
+      trackIndeed: document.getElementById("trackIndeed").checked,
       userToken: document.getElementById("apiToken").value.trim(),
       backendUrl: document.getElementById("backendUrl").value.trim(),
     };
 
-    await chrome.storage.local.set(settings);
-    showStatus("Settings saved successfully!", "success");
+    await secureStorage.set("settings", newSettings);
+    showStatus("Settings saved securely!", "success");
 
     // Close options page after successful save
     setTimeout(() => {
       window.close();
     }, 1500);
   } catch (error) {
-    console.error("Error saving settings:", error);
+    console.error("Error saving secure settings:", error);
     showStatus("Error saving settings", "error");
   }
 }
 
-async function resetSettings() {
-  if (confirm("Are you sure you want to reset all settings to default?")) {
-    await chrome.storage.local.clear();
+async function resetSecureSettings() {
+  if (
+    confirm(
+      "Are you sure you want to reset all settings to default? This will clear all local data."
+    )
+  ) {
+    await secureStorage.clearAllData();
 
     const defaultSettings = {
       isEnabled: true,
@@ -77,15 +88,46 @@ async function resetSettings() {
       trackLinkedIn: true,
       trackInternshala: true,
       trackUnstop: true,
+      trackIndeed: true,
       userToken: null,
       backendUrl: "http://localhost:3000",
-      trackedJobs: [],
-      pendingJobs: [],
+      security: {
+        lastVerified: null,
+        encryptionEnabled: true,
+      },
     };
 
-    await chrome.storage.local.set(defaultSettings);
-    await loadSettings();
-    showStatus("Settings reset to defaults", "success");
+    await secureStorage.set("settings", defaultSettings);
+    await loadSecureSettings();
+    showStatus("Settings reset to secure defaults", "success");
+  }
+}
+
+async function verifySecureConnection() {
+  const verifyButton = document.getElementById("verifyConnection");
+  const statusElement = document.getElementById("statusMessage");
+
+  verifyButton.disabled = true;
+  verifyButton.textContent = "Verifying...";
+
+  try {
+    const result = await chrome.runtime.sendMessage({
+      action: "verifyConnection",
+    });
+
+    if (result.success && result.verified) {
+      showStatus("Secure connection verified successfully!", "success");
+    } else {
+      showStatus(
+        "Connection failed: " + (result.error || "Invalid token"),
+        "error"
+      );
+    }
+  } catch (error) {
+    showStatus("Verification failed: " + error.message, "error");
+  } finally {
+    verifyButton.disabled = false;
+    verifyButton.textContent = "Verify Connection";
   }
 }
 
@@ -93,8 +135,9 @@ function showStatus(message, type) {
   const statusElement = document.getElementById("statusMessage");
   statusElement.textContent = message;
   statusElement.className = `status-message ${type}`;
+  statusElement.style.display = "block";
 
   setTimeout(() => {
     statusElement.style.display = "none";
-  }, 3000);
+  }, 5000);
 }

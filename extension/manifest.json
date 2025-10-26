@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "TrackRuit - Job Application Tracker",
-  "version": "1.0.0",
-  "description": "Automatically track job applications across platforms",
+  "name": "TrackRuit - Secure Job Tracker",
+  "version": "1.1.0",
+  "description": "Automatically and securely track job applications across platforms",
   
   "icons": {
     "16": "icons/icon16.png",
@@ -14,15 +14,17 @@
     "activeTab",
     "storage",
     "scripting",
-    "tabs"
+    "tabs",
+    "alarms"
   ],
 
   "host_permissions": [
     "https://*.linkedin.com/*",
     "https://*.internshala.com/*",
     "https://*.unstop.com/*",
+    "https://*.indeed.com/*",
     "http://localhost:3000/*",
-    "https://your-trackruit-domain.com/*"
+    "https://*.trackruit.onrender.com/*"
   ],
 
   "background": {
@@ -34,16 +36,19 @@
       "matches": [
         "https://*.linkedin.com/*",
         "https://*.internshala.com/*",
-        "https://*.unstop.com/*"
+        "https://*.unstop.com/*",
+        "https://*.indeed.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_end"
     }
   ],
 
   "action": {
     "default_popup": "popup.html",
-    "default_title": "TrackRuit - Click to view status"
+    "default_title": "TrackRuit - Secure Job Tracker"
   },
 
   "options_page": "options.html"

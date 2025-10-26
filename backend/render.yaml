@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: trackruit-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        value: https://trackruit.onrender.com
+      - key: BACKEND_URL
+        value: https://trackruit-backend.onrender.com
+      - key: JWT_SECRET
+        generateValue: true
+      - key: EXTENSION_SECRET
+        generateValue: true
+      - key: LOG_LEVEL
+        value: info

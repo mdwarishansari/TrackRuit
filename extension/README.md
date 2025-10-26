@@ -1,351 +1,387 @@
 # 🧩 TrackRuit Chrome Extension
 
-<div align="center">
-
 ![TrackRuit Logo](https://img.shields.io/badge/TrackRuit-AI%20Job%20Tracker-blue?style=for-the-badge&logo=google-chrome&logoColor=white)
-![Version](https://img.shields.io/badge/version-1.0.0-green?style=for-the-badge)
-![Manifest V3](https://img.shields.io/badge/Manifest-V3-critical?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge)
-
-_Automate your job tracking — directly from LinkedIn, Internshala, and Unstop._
-
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage-guide) • [Development](#-development) • [Support](#-support--contact)
-
-</div>
+![Version](https://img.shields.io/badge/version-1.1.0-green?style=for-the-badge)
+![Manifest](https://img.shields.io/badge/Manifest-V3-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Stable-brightgreen?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)
 
 ---
 
-## 📘 Overview
+## 🧠 Overview
 
-The **TrackRuit Chrome Extension** is the automation bridge of the TrackRuit ecosystem.
-It detects and syncs your job or internship applications from **LinkedIn**, **Internshala**, and **Unstop** to your TrackRuit dashboard — **no manual input needed**.
+**TrackRuit Chrome Extension** is a core component of the **TrackRuit Ecosystem**, designed to **automatically track and log job/internship applications** across multiple platforms like **LinkedIn, Internshala, Unstop, Indeed**, and more.
 
-Whenever you apply to a job, the extension captures job details (title, company, location, status, platform) and sends them securely to your TrackRuit backend. It’s designed to be **fast**, **lightweight**, and **privacy-first**.
+Once a user applies for a job while logged into their **TrackRuit account**, the extension automatically:
 
-> “You apply — TrackRuit tracks.”
-
----
-
-## 🚀 Features
-
-### 🎯 Core Highlights
-
-| Feature                      | Description                                     | Status  |
-| ---------------------------- | ----------------------------------------------- | ------- |
-| 🤖 **Auto Job Detection**    | Detects applications on supported sites         | ✅ Live |
-| 🔄 **Instant Sync**          | Automatically syncs with your TrackRuit account | ✅ Live |
-| 💾 **Offline Storage**       | Stores jobs locally if offline, syncs later     | ✅ Live |
-| 🎨 **Manual Save Button**    | Quick-save jobs from any site manually          | ✅ Live |
-| 🔒 **JWT Authentication**    | Uses TrackRuit login token for secure sync      | ✅ Live |
-| 📊 **Analytics Integration** | Works seamlessly with TrackRuit dashboard       | ✅ Live |
-
-### 🧠 Technical Advantages
-
-- **Manifest V3 compliant**
-- **Modular architecture**
-- **Zero data collection beyond user intent**
-- **Light on memory and performance**
-- **Supports both auto and manual workflows**
-- **Compatible with Chrome 88+ and Chromium-based browsers**
+- Detects job submissions.
+- Captures essential job data (title, company, URL, status, etc.).
+- Syncs them securely to the user’s database via TrackRuit’s backend APIs.
 
 ---
 
-## 📂 Folder Structure
+## 🎯 Core Objectives
 
-Your folder tree (`extension/`) looks like this:
+- **Zero manual input**: Auto-detect and capture job applications.
+- **Secure synchronization**: Encrypted communication between extension and backend.
+- **User-specific logging**: Only logged-in users can activate the auto-track feature.
+- **Cross-platform compatibility**: Works seamlessly on job portals.
+- **Privacy-first design**: No personal data stored locally beyond session scope.
+
+---
+
+## 💡 Problems Solved
+
+- Avoids repetitive form-filling and manual tracking.
+- Centralizes all applied job data into one dashboard.
+- Eliminates human error in application tracking.
+- Enables AI analytics (via TrackRuit ML backend).
+
+---
+
+## ✨ Key Features
+
+- 🌐 Auto-detection of job application events.
+- 🔐 Secure dual-layer verification (Auth + Extension Secret).
+- 📡 Real-time data sync via REST APIs.
+- 📦 Local caching for offline retries.
+- 🧾 Manifest V3 compliant with background service workers.
+- 🔍 Cross-domain permission control.
+- 🧰 Simple configuration for developers and testers.
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer                   | Technology                                              |
+| ----------------------- | ------------------------------------------------------- |
+| **Frontend**            | HTML, CSS, JavaScript (ES6), Chrome Extension API       |
+| **Communication**       | Fetch API, JWT-based Auth                               |
+| **Backend Integration** | TrackRuit REST APIs                                     |
+| **Security**            | HMAC Signature, Timestamp Validation, Encrypted Headers |
+| **Manifest**            | Version 3                                               |
+
+---
+
+## 📡 API Integration Details
+
+The extension interacts with the backend using **secure REST APIs**.  
+Below are the **mandatory endpoints** required for backend implementation.
+
+---
+
+### 🔐 Authentication APIs
+
+#### 1. **POST `/api/auth/verify`**
+
+**Purpose:** Verify JWT token validity.
+
+**Headers Required:**
 
 ```
-extension/
-├── icons/
-│   ├── icon-active.png
-│   ├── icon16.png
-│   ├── icon48.png
-│   └── icon128.png
-│
-├── utils/
-│   ├── api.js           # Handles backend API requests
-│   ├── constants.js     # URL endpoints and fixed values
-│   └── storage.js       # Local storage operations (sync/restore)
-│
-├── background.js        # Background service worker
-├── content.js           # Detects jobs from active job sites
-├── manifest.json        # Chrome Extension configuration (Manifest V3)
-├── popup.html           # Main popup UI
-├── popup.js             # Popup behavior logic
-├── popup.css            # Popup styling
-├── options.html         # Settings / configuration page
-├── options.js           # Settings logic and token management
-├── options.css          # Styling for settings page
-└── README.md            # This documentation
+
+Authorization: Bearer <jwt_token>
+X-Extension-Secret: <your_secret_key>
+X-Extension-Version: 1.1.0
+X-Request-Timestamp: <timestamp>
+Content-Type: application/json
+
 ```
 
----
+**Request Body:**
 
-## ⚙️ Installation
-
-### 🧭 Option 1: Manual Installation (Recommended for Developers)
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/trackruit/trackruit-extension.git
-   cd trackruit/extension
-   ```
-
-2. **Load into Chrome:**
-
-   - Open Chrome → go to `chrome://extensions/`
-   - Enable **Developer Mode** (top right corner)
-   - Click **Load unpacked**
-   - Select the `extension` folder
-
-3. **Verify Installation:**
-
-   - TrackRuit icon appears in Chrome toolbar
-   - Click the icon → Popup loads successfully
-
-### 🛍️ Option 2: Chrome Web Store (Coming Soon)
-
-```bash
-# Once published
-Visit: chrome.google.com/webstore/detail/trackruit
+```json
+{}
 ```
 
----
+**Response:**
 
-## 🧭 Usage Guide
-
-### 🔑 Initial Setup
-
-1. **Sign up or log in** at [TrackRuit Web](https://trackruit.com)
-2. Navigate to **Account Settings → API Token**
-3. Copy your JWT token
-4. Open **Extension Settings (Options Page)**
-5. Paste token under “API Token”
-6. Enable the job platforms you want to track
-
-### 💡 Start Tracking
-
-- Apply for jobs on supported platforms (LinkedIn, Internshala, Unstop)
-- The extension will **auto-detect** the job and save it to your dashboard
-- View tracked applications anytime on your TrackRuit web account
-
-### 🧩 Manual Save
-
-When auto-detection isn’t supported:
-
-- Click the **TrackRuit icon** on toolbar
-- Press “Save Current Job”
-- Job info is extracted and sent to backend
-
----
-
-## 🌐 Supported Platforms
-
-| Platform    | Auto Detection | Manual Save |
-| ----------- | -------------- | ----------- |
-| LinkedIn    | ✅             | ✅          |
-| Internshala | ✅             | ✅          |
-| Unstop      | ✅             | ✅          |
-| Naukri      | 🔄 Coming Soon | ✅          |
-| Indeed      | 🔄 Coming Soon | ✅          |
-| Other Sites | ❌             | ✅          |
-
----
-
-## ⚙️ Configuration
-
-All configuration happens within **options.html** and **manifest.json**.
-The extension connects directly to the TrackRuit backend using secure JWT authentication.
-
-```javascript
-// Example configuration (in utils/constants.js)
-export const CONFIG = {
-  BACKEND_URL: "https://api.trackruit.com",
-  ADD_JOB_ENDPOINT: "/api/jobs/add",
-  VERIFY_TOKEN_ENDPOINT: "/api/auth/verify",
-};
-```
-
----
-
-## 🧑‍💻 Development
-
-### 🏗 Prerequisites
-
-- Node.js (optional for running build scripts)
-- Chrome browser v88+
-- A TrackRuit account with valid JWT token
-
-### 💻 Local Development Workflow
-
-```bash
-# 1. Clone repo
-git clone https://github.com/trackruit/trackruit-extension.git
-
-# 2. Move into extension directory
-cd extension
-
-# 3. (Optional) Install dependencies if build tools added later
-npm install
-
-# 4. Load unpacked extension
-chrome://extensions → Load unpacked → Select "extension" folder
-```
-
-### 🔬 Testing New Platforms
-
-To add a new job site:
-
-1. Add the site to `manifest.json` under `content_scripts`
-2. Extend `content.js` with platform-specific selectors
-3. Test detection logs via Chrome DevTools console
-
-Example snippet:
-
-```javascript
-// In content.js
-if (window.location.hostname.includes("newjobsite.com")) {
-  detectJob({
-    title: document.querySelector(".job-title")?.innerText,
-    company: document.querySelector(".company-name")?.innerText,
-  });
+```json
+{
+  "valid": true,
+  "user": {
+    "id": "user_id",
+    "email": "user@example.com"
+  }
 }
 ```
 
 ---
 
-## 🧩 Manifest Overview (Manifest V3)
+### 💼 Job Management APIs
+
+#### 2. **POST `/api/jobs/add`**
+
+**Purpose:** Add a single job application entry.
+
+**Headers:**
+Same as above +
+`X-Signature: <request_signature>`
+
+**Request Body:**
 
 ```json
 {
-  "manifest_version": 3,
-  "name": "TrackRuit",
-  "version": "1.0.0",
-  "description": "Automatically tracks your job applications from multiple platforms.",
-  "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
-  "host_permissions": [
-    "https://www.linkedin.com/*",
-    "https://internshala.com/*",
-    "https://unstop.com/*"
-  ],
-  "background": { "service_worker": "background.js" },
-  "action": { "default_popup": "popup.html" },
-  "options_page": "options.html",
-  "content_scripts": [
+  "title": "Software Engineer",
+  "company": "Tech Corp",
+  "platform": "linkedin",
+  "url": "https://linkedin.com/jobs/view/123",
+  "appliedAt": "2024-01-15T10:30:00.000Z",
+  "status": "applied",
+  "source": "auto_detect",
+  "location": "Remote",
+  "description": "Job description...",
+  "salary": "$100,000 - $150,000"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "jobId": "job_123456",
+  "message": "Job added successfully"
+}
+```
+
+---
+
+#### 3. **POST `/api/jobs/sync`** _(Future Recommended Endpoint)_
+
+**Purpose:** Bulk sync multiple pending jobs.
+
+**Request Body:**
+
+```json
+{
+  "pendingJobs": [
     {
-      "matches": [
-        "https://www.linkedin.com/*",
-        "https://internshala.com/*",
-        "https://unstop.com/*"
-      ],
-      "js": ["content.js"]
+      "id": "local_job_id_1",
+      "title": "Job 1",
+      "company": "Company A",
+      "platform": "linkedin",
+      "url": "https://example.com/job1",
+      "appliedAt": "2024-01-15T10:30:00.000Z",
+      "status": "applied"
+    },
+    {
+      "id": "local_job_id_2",
+      "title": "Job 2",
+      "company": "Company B",
+      "platform": "indeed",
+      "url": "https://example.com/job2",
+      "appliedAt": "2024-01-15T11:00:00.000Z",
+      "status": "applied"
     }
   ]
 }
 ```
 
----
+**Response:**
 
-## 🔒 Privacy & Security
-
-| Data Type  | Storage       | Transmission | Purpose              |
-| ---------- | ------------- | ------------ | -------------------- |
-| Job Data   | Local + Cloud | Encrypted    | Tracking & analytics |
-| User Token | Local Storage | Encrypted    | Authentication       |
-| Settings   | Local Storage | None         | Custom configuration |
-
-✅ **No browsing history** collected
-✅ **No third-party analytics**
-✅ **Secure HTTPS communication**
-✅ **JWT-based authorization**
+```json
+{
+  "success": true,
+  "synced": 2,
+  "failed": 0,
+  "syncedJobs": ["job_123", "job_124"]
+}
+```
 
 ---
 
-## 🧭 Troubleshooting
+### 📋 Complete API Summary
 
-| Issue                 | Possible Fix                                        |
-| --------------------- | --------------------------------------------------- |
-| Extension not visible | Check `chrome://extensions` → Enable Developer Mode |
-| No jobs detected      | Ensure platform is enabled in Settings              |
-| Token invalid         | Re-authenticate via TrackRuit web                   |
-| Popup not loading     | Reinstall extension or reload                       |
-| API request failed    | Verify backend server URL in constants.js           |
+| Method   | Endpoint           | Purpose          | Headers Required                             |
+| -------- | ------------------ | ---------------- | -------------------------------------------- |
+| **POST** | `/api/auth/verify` | Verify JWT token | Auth, Extension-Secret, Timestamp            |
+| **POST** | `/api/jobs/add`    | Add single job   | Auth, Extension-Secret, Timestamp, Signature |
+| **POST** | `/api/jobs/sync`   | Bulk sync jobs   | Auth, Extension-Secret, Timestamp, Signature |
 
 ---
 
-## 🧩 Roadmap
+## 🧱 Security Architecture
 
-### ✅ Completed
+### 1. Dual Verification System
 
-- LinkedIn, Internshala, Unstop integrations
-- Offline support & manual save
-- Secure token sync
-- Popup & settings UI
+Each API request is verified using:
 
-### 🔄 In Progress
+- **JWT Authentication** for user identity.
+- **Extension Secret Key** to ensure request origin.
+- **Timestamp Validation** to prevent replay attacks.
+- **Optional HMAC Signature** for request integrity.
 
-- Naukri & Indeed integration
-- Enhanced error handling
-- Chrome notifications
+**Backend Validation Snippets:**
 
-### 🔮 Planned (v2.0)
+```js
+// 1. Verify extension secret
+if (req.headers["x-extension-secret"] !== process.env.EXTENSION_SECRET) {
+  return res.status(401).json({ error: "Invalid extension secret" });
+}
 
-- Resume & interview tracking
-- AI job match suggestions
-- Multi-browser support
-- Cloud-based auto backup
+// 2. Verify request timestamp
+const requestTime = parseInt(req.headers["x-request-timestamp"]);
+if (Math.abs(Date.now() - requestTime) > 300000) {
+  // 5 minutes
+  return res.status(401).json({ error: "Request timestamp expired" });
+}
+
+// 3. Optional signature verification
+// Compare X-Signature header against calculated HMAC
+```
+
+### 2. Secure Folder Structure
+
+```
+Here’s your **TrackRuit Chrome Extension folder tree**, rewritten with sharp, clean formatting, hand-picked emojis, and comments that explain *why each file exists and how it fits into the system.*
+It’s developer-friendly, self-documenting, and ready to drop right into your README.
+
+---
+
+
+```
+
+📁 extension # Root folder of the Chrome extension
+│
+├── 📁 icons # All extension icons and favicon assets
+│ ├── 🖼️ icon-active.png # Shown when extension is active or tracking jobs
+│ ├── 🖼️ icon128.png # 128x128 icon used for Chrome Web Store
+│ ├── 🖼️ icon48.png # Toolbar icon (standard size)
+│ └── 🖼️ icon16.png # Favicon for popup or small render
+│
+├── 📁 utils # Helper modules for API, constants & storage
+│ ├── 📄 api.js # Centralized API handler with auth headers & error handling
+│ ├── 📄 constants.js # Global constants (URLs, keys, environment flags)
+│ ├── 📄 constants-nomodule.js # Fallback constants for non-module scripts (Manifest V3)
+│ └── 📄 storage.js # Wrapper for Chrome local/session storage operations
+│
+├── 📝 README.md # Local extension-specific documentation
+│
+├── 📄 background.js # Service worker — listens for tab updates & job actions
+│ # Handles auto-tracking and backend API calls
+│
+├── 📄 content.js # Injected into job portals (LinkedIn, Internshala, etc.)
+│ # Detects "Apply" events and extracts job data
+│
+├── ⚙️ manifest.json # Manifest V3 definition — permissions, scripts, icons, etc.
+│
+├── 🌐 popup.html # Popup UI when user clicks the extension icon
+├── 🎨 popup.css # Styling for popup interface
+├── 📄 popup.js # Handles popup logic: auth check, user state, UI actions
+│
+├── 🌐 options.html # Extension settings page (optional configurations)
+├── 🎨 options.css # Styling for options page
+└── 📄 options.js # Logic for managing user preferences or extension behavior
+
+```
+
+---
+
+### 🧭 Quick Notes
+- **`background.js`** runs persistently as a service worker — it’s the brain that coordinates sync and event triggers.
+- **`content.js`** acts as the eyes and ears inside job portals, detecting relevant DOM changes.
+- **`utils/api.js`** ensures every API call includes authentication, security headers, and proper error fallback.
+- **`storage.js`** abstracts away Chrome’s async storage API into cleaner Promises.
+- **`manifest.json`** defines everything Chrome needs to understand and run your extension securely under **Manifest V3**.
+- **`popup.*`** provides a clean user interface — login state, quick actions, and visual feedback.
+- **`options.*`** is optional but powerful — used for toggling preferences like auto-sync delay or job-source filters.
+
+---
+
+
+```
+
+### 3. Token Lifecycle
+
+- Token stored only in Chrome’s secure storage.
+- Auto-refresh when expired.
+- Logout clears local cache instantly.
+
+---
+
+## ⚙️ Installation & Setup (For Developers)
+
+1. Clone this repository:
+
+   ```bash
+   git clone https://github.com/<your-username>/trackruit-extension.git
+   cd trackruit-extension
+   ```
+
+2. Open Chrome → `chrome://extensions/`
+
+3. Enable **Developer Mode**.
+
+4. Click **Load unpacked** → Select the project root folder.
+
+5. The TrackRuit extension will appear in your browser toolbar.
+
+---
+
+## 🚀 Usage Guide
+
+1. Log in to your **TrackRuit** account on the main web app.
+2. Pin the **TrackRuit Extension** in Chrome.
+3. Browse job portals like LinkedIn, Internshala, or Unstop.
+4. When you apply for a job:
+
+   - The extension auto-captures job data.
+   - Sends it to your TrackRuit account using `/api/jobs/add`.
+
+5. Check your dashboard — all applied jobs are tracked automatically.
+
+---
+
+## 🔐 Permissions Explained
+
+| Permission         | Reason                                               |
+| ------------------ | ---------------------------------------------------- |
+| `activeTab`        | Detects user job application actions.                |
+| `storage`          | Saves local sync and auth tokens.                    |
+| `scripting`        | Injects content scripts into supported job sites.    |
+| `host_permissions` | Access to job portal URLs for scraping job metadata. |
+
+---
+
+## 🧪 Testing & Debugging
+
+- Open **Chrome Developer Tools → Console → Service Worker Logs**.
+- Use `console.log()` for background events.
+- Verify API responses with `Network → Fetch/XHR` tab.
+- For local backend: set `BACKEND_URL=http://localhost:5000`.
+- For production: update `BACKEND_URL=https://trackruit-backend.onrender.com`.
+
+---
+
+## 🔭 Future Enhancements
+
+- AI-driven job relevance scoring (integration with ML backend).
+- Multi-tab synchronization via Chrome Sync API.
+- Advanced analytics on job application success trends.
+- Offline queueing for unsent job logs.
+- Role-based multi-user API access.
+
+---
+
+## 🤝 Contribution
+
+Pull requests are welcome.
+Ensure your code follows the project’s structure and passes linting checks.
 
 ---
 
 ## 📄 License
 
-**MIT License**
+Licensed under the **MIT License**.
+© 2025 **TrackRuit Technologies**. All rights reserved.
+
+---
+
+### 🧩 Summary
+
+> The TrackRuit Chrome Extension bridges user actions across multiple job platforms with the central TrackRuit dashboard — automatically, securely, and intelligently. It’s the invisible connector that keeps every application accounted for.
 
 ```
-Copyright (c) 2024 TrackRuit
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software.
 ```
-
----
-
-## 👥 Team & Acknowledgments
-
-**Lead Developer:** Mohammad Warish
-**UI/UX Design:** TrackRuit Frontend Team
-**QA & Testing:** TrackRuit Core Contributors
-**Special Thanks:** Chrome DevTools community, open-source contributors, and beta testers.
-
----
-
-## 📞 Support & Contact
-
-| Type          | Channel                                                                  |
-| ------------- | ------------------------------------------------------------------------ |
-| 📧 Email      | [support@trackruit.com](mailto:support@trackruit.com)                    |
-| 🐛 Report Bug | [GitHub Issues](https://github.com/trackruit/trackruit-extension/issues) |
-| 💬 Community  | [Discord Server](https://discord.gg/trackruit)                           |
-| 📚 Docs       | [docs.trackruit.com](https://docs.trackruit.com)                         |
-
----
-
-<div align="center">
-
-## 🚀 Automate Your Job Search with TrackRuit
-
-**Apply once — track everywhere.**
-[**→ Get Started**](https://trackruit.com)
-
-⭐ _Star this repo if you find it helpful._
-
-</div>
