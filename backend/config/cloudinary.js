@@ -7,25 +7,17 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export const uploadToCloudinary = (file, folder = "resumes") => {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      file,
-      {
-        resource_type: "auto",
-        folder: folder,
-        timeout: 60000,
-      },
-      (error, result) => {
-        if (error) {
-          logger.error("Cloudinary upload error:", error);
-          reject(error);
-        } else {
-          resolve(result);
-        }
-      }
-    );
-  });
+export const uploadToCloudinary = async (file, folder = "trackruit") => {
+  try {
+    const result = await cloudinary.uploader.upload(file, {
+      folder,
+      resource_type: "auto",
+    });
+    return result;
+  } catch (error) {
+    logger.error("Cloudinary upload error:", error);
+    throw new Error("File upload failed");
+  }
 };
 
 export const deleteFromCloudinary = async (publicId) => {
@@ -34,7 +26,7 @@ export const deleteFromCloudinary = async (publicId) => {
     return result;
   } catch (error) {
     logger.error("Cloudinary delete error:", error);
-    throw error;
+    throw new Error("File deletion failed");
   }
 };
 

@@ -1,48 +1,36 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-import { useTheme } from "../../contexts/ThemeContext";
-import DarkModeToggle from "./DarkModeToggle";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Bars3Icon,
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import DarkModeToggle from './DarkModeToggle';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Bars3Icon, 
   XMarkIcon,
-  UserCircleIcon,
-} from "@heroicons/react/24/outline";
+  UserCircleIcon 
+} from '@heroicons/react/24/outline';
 
 const Header = () => {
   const { user, logout } = useAuth();
-  const { isDark } = useTheme();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navigation = [
-    { name: "🏠 Home", href: "/", current: location.pathname === "/" },
-    {
-      name: "📊 Dashboard",
-      href: "/dashboard",
-      current: location.pathname === "/dashboard",
-    },
-    { name: "💼 Jobs", href: "/jobs", current: location.pathname === "/jobs" },
-    {
-      name: "📄 Resume",
-      href: "/resume",
-      current: location.pathname === "/resume",
-    },
-    {
-      name: "📈 Analytics",
-      href: "/analytics",
-      current: location.pathname === "/analytics",
-    },
+    { name: '🏠 Home', href: '/', current: location.pathname === '/' },
+    { name: '📊 Dashboard', href: '/dashboard', current: location.pathname === '/dashboard' },
+    { name: '💼 Jobs', href: '/jobs', current: location.pathname === '/jobs' },
+    { name: '📄 Resume', href: '/resume', current: location.pathname === '/resume' },
+    { name: '📈 Analytics', href: '/analytics', current: location.pathname === '/analytics' },
   ];
 
   const handleLogout = () => {
     logout();
     setIsMenuOpen(false);
+    navigate('/');
   };
 
   return (
-    <motion.header
+    <motion.header 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="bg-white dark:bg-dark-800 shadow-lg transition-colors duration-300"
@@ -62,7 +50,7 @@ const Header = () => {
                 alt="TrackRuit"
               />
             </motion.div>
-            <motion.span
+            <motion.span 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent"
@@ -79,8 +67,8 @@ const Header = () => {
                 to={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                   item.current
-                    ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-dark-700"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-dark-700"
+                    ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-dark-700'
+                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-dark-700'
                 }`}
               >
                 {item.name}
@@ -91,7 +79,7 @@ const Header = () => {
           {/* Right side items */}
           <div className="flex items-center space-x-4">
             <DarkModeToggle />
-
+            
             {user ? (
               <div className="relative">
                 <button
@@ -113,11 +101,11 @@ const Header = () => {
                       className="absolute right-0 mt-2 w-48 bg-white dark:bg-dark-700 rounded-lg shadow-lg py-1 z-50"
                     >
                       <Link
-                        to="/profile"
+                        to="/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-600"
                         onClick={() => setIsMenuOpen(false)}
                       >
-                        👤 Profile
+                        👤 Dashboard
                       </Link>
                       <Link
                         to="/settings"
@@ -172,7 +160,7 @@ const Header = () => {
           {isMenuOpen && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
+              animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden border-t border-gray-200 dark:border-dark-600"
             >
@@ -183,8 +171,8 @@ const Header = () => {
                     to={item.href}
                     className={`block px-3 py-2 rounded-md text-base font-medium transition-colors ${
                       item.current
-                        ? "text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-dark-700"
-                        : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-dark-700"
+                        ? 'text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-dark-700'
+                        : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-dark-700'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >

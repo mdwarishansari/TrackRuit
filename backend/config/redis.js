@@ -1,5 +1,5 @@
-import redis from "redis";
-import { logger } from "../utils/logger.js";
+import redis from 'redis';
+import { logger } from '../utils/logger.js';
 
 let client;
 
