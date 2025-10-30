@@ -1,2 +1,4 @@
 .env
 .env.expp
+
+/node_modules
